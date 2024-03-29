@@ -4,6 +4,9 @@
     $class = "";
     $email = "";
     $marks = "";
+    $yourself="";
+    $subject="";
+    $gender="";
     $showButton = true;
 
     //Insert Method
@@ -12,15 +15,30 @@
         $class = $_POST['class'];
         $email = $_POST['email'];
         $marks = $_POST['marks'];
-
-        $sql = "INSERT INTO crud (name,class,email,marks) VALUES ('$name','$class','$email','$marks')";
+        $yourself = $_POST['yourself'];
+        echo $yourself;
+        $subject = $_POST['subject'];
+        $gender = $_POST['gender'];
+ 
+        $sql = "INSERT INTO crud (name,class,email,marks,yourself,subject,gender) VALUES ('$name','$class','$email','$marks','$yourself','$subject','$gender')";
         $result = mysqli_query($con,$sql);
         header("Location: user.php");
         exit();
     }
-    //  Delete Method
+    //  Delete Method -> Asking for Confirmation
     if(isset($_GET['deleteid'])){
         $id = $_GET['deleteid'];
+        echo '<script>
+        let v = confirm("Do u want to continue?");
+        if(v){
+            window.location.href = "http://localhost/crud_op/user.php?id='.$id.'";
+        }
+        </script>';
+        
+    }
+    // Delete Method -> Deleting from DB
+    if(isset($_GET['id'])){
+        $id = $_GET['id'];
         $sqlDel  = "DELETE FROM crud WHERE id = $id";
         $resDel = mysqli_query($con, $sqlDel);
         if($resDel){
@@ -42,6 +60,10 @@
         $class = $row['class'];
         $email = $row['email'];
         $marks = $row['marks'];
+        $yourself = $row['yourself'];
+        $subject = $row['subject'];
+        //echo $yourself."\n";
+        $gender = $row['gender'];
         
     }
     if(isset($_POST['update'])){
@@ -49,13 +71,22 @@
         $class = $_POST['class'];
         $email = $_POST['email'];
         $marks = $_POST['marks'];
+        $yourself = $_POST['yourself'];
+        $subject = $_POST['subject'];
+        $gender = $_POST['gender'];
         //echo "Entered".$name.$class.$email.$marks;
-        $sqlup = "UPDATE crud SET name='$name', class='$class', email='$email', marks='$marks'  WHERE id = '$idupdate'";
+        $sqlup = "UPDATE crud SET name='$name', class='$class', email='$email', marks='$marks', yourself='$yourself', subject='$subject', gender='$gender'  WHERE id = '$idupdate'";
         $resultup = mysqli_query($con,$sqlup);
         if($resultup){
-            echo "Updated Successfully !";
-            header("Location: user.php");
-            exit();
+            //echo "Updated Successfully !";
+            
+           
+            echo '<script>
+              alert("Data Updated Successfully !!");
+              window.location.href = "http://localhost/crud_op/user.php";
+            </script>';
+            //header("Location: user.php");
+            //exit();
         }
         else{
             echo "Error: Could not able to Update".mysqli_error();
@@ -98,10 +129,33 @@
                 <label for="InputPassword">Marks</label>
                 <input type="number" class="form-control" name="marks" placeholder="Enter Your Marks" value="<?php echo $marks;?>" required>
             </div>
+            <div class="form-group">
+                <label for="textbox">Write About Yourself</label>
+                <textarea class='form-control' rows='3' name="yourself" placeholder="Write Here ..." ><?php echo $yourself ?></textarea>
+            </div>
+            <div class="form-group">
+                <label for="Favourite Subject">Select Your Favourite Subject : </label>
+                <select name="subject">
+                    <option value="none" selected disabled hidden>---Select---</option>
+                    <option value="Physics"<?php if($subject=="Physics") echo 'selected="selected"'; ?>>Physics</option>
+                    <option value="Chemistry"<?php if($subject=="Chemistry") echo 'selected="selected"'; ?>>Chemistry</option>
+                    <option value="Maths"<?php if($subject=="Maths") echo 'selected="selected"'; ?>>Maths</option>
+                    <option value="Arts"<?php if($subject=="Arts") echo 'selected="selected"'; ?>>Arts</option>
+                    <option value="Geography"<?php if($subject=="Geography") echo'selected="selected"'; ?>>Grography</option>
+                    <option value="Accounts"<?php if($subject=="Accounts") echo'selected="selected"'; ?>>Accounts</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="Gender">Gender</label><br>
+                <label for="male"><input type="radio" name="gender" value="Male" <?php if($gender=="Male") echo'checked="checked"'; ?>> Male</label><br>
+                <label for="female"><input type="radio" name="gender" value="Female" <?php if($gender=="Female") echo'checked="checked"'; ?>> Female</label><br>
+                <label for="other"><input type="radio" name="gender" value="Other" <?php if($gender=="Other") echo'checked="checked"'; ?>> Other</label>
+            </div>
+            
             <?php
                 if ($showButton) {
         
-                    echo '<button type="submit" class="btn btn-primary" name="submit">Submit</button>';
+                    echo '<button type="submit" class="btn btn-success" name="submit">Submit</button>';
 
                 } else {
 
@@ -120,6 +174,9 @@
                     <th>Class</th>
                     <th>Email</th>
                     <th>Marks</th>
+                    <th>Yourself</th>
+                    <th>Subject</th>
+                    <th>Gender</th>
                     <th>Edit</th>
                     <th>Delete</th>
                 </tr>
@@ -135,14 +192,21 @@
                             $class = $row['class'];
                             $email = $row['email'];
                             $marks = $row['marks'];
+                            $yourself = $row['yourself'];
+                            $subject = $row['subject'];
+                            $gender = $row['gender'];
                             echo '<tr>
                             <th scope="row">'.$j.'</th>
                             <td>'.$name.'</td>
                             <td>'.$class.'</td>
                             <td>'.$email.'</td>
                             <td>'.$marks.'</td>
+                            <td>'.$yourself.'</td>
+                            <td>'.$subject.'</td>
+                            <td>'.$gender.'</td>
                             <td><a href="user.php?updateid='.$id.'" class="btn btn-primary">Edit</a></td> 
                             <td><a href="user.php?deleteid='.$id.'" class="btn btn-danger">Delete</a></td>
+                            
                             </tr>';
                             $j++;
                         }
