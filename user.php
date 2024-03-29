@@ -110,6 +110,7 @@
   <body>
     <main class="container display=flex">
         <img src="./bird_colorful.jpg" alt="" style="width:100px; height:100px">
+        <h2>CRUD Operations</h2>
         <form method="post">
             <div class="form-group">
                 <label for="InputEmail">Name</label>
