@@ -180,7 +180,7 @@
                 echo '<div class="form-group">
                         <img src="./images/'.$image.'" width="150px" height="150px" alt="display-img" />
                  </div>';
-                 echo '<button class="btn btn-success" name="preview">Preview</button>';
+                 echo '<a href="./images/'.$image.'" target="_blank" class="btn btn-success" name="preview">Preview</a>';
                  echo '<a href="user.php?deleteimgid='.$idupdate.'" class="btn btn-danger">Delete</a>';
               }
             ?>
