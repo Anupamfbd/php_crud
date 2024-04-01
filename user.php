@@ -7,6 +7,7 @@
     $yourself="";
     $subject="";
     $gender="";
+   // $image="fighter_jet";
     $showButton = true;
 
     //Insert Method
@@ -16,12 +17,18 @@
         $email = $_POST['email'];
         $marks = $_POST['marks'];
         $yourself = $_POST['yourself'];
-        echo $yourself;
         $subject = $_POST['subject'];
         $gender = $_POST['gender'];
+
+        $filename = $_FILES["uploadfile"]["name"];
+        $tempname = $_FILES["uploadfile"]["tmp_name"];
+        $folder = './images/'.$filename;
  
-        $sql = "INSERT INTO crud (name,class,email,marks,yourself,subject,gender) VALUES ('$name','$class','$email','$marks','$yourself','$subject','$gender')";
+        $sql = "INSERT INTO crud (image,name,class,email,marks,yourself,subject,gender) VALUES ('$filename','$name','$class','$email','$marks','$yourself','$subject','$gender')";
         $result = mysqli_query($con,$sql);
+        if($result){
+            move_uploaded_file($tempname, $folder);
+        }
         header("Location: user.php");
         exit();
     }
@@ -49,7 +56,7 @@
             echo "ERROR: Could not able to Delete" . mysqli_error();
         }
     }
-    //Update Method
+    //Update Method- to display stored data
      if(isset($_GET['updateid'])){
         $showButton = false;
         $idupdate = $_GET['updateid']; 
@@ -62,10 +69,12 @@
         $marks = $row['marks'];
         $yourself = $row['yourself'];
         $subject = $row['subject'];
+        $image = $row['image'];
         //echo $yourself."\n";
         $gender = $row['gender'];
         
     }
+    //update Method - to update the changed data
     if(isset($_POST['update'])){
         $name = $_POST['name'];
         $class = $_POST['class'];
@@ -74,12 +83,17 @@
         $yourself = $_POST['yourself'];
         $subject = $_POST['subject'];
         $gender = $_POST['gender'];
+
+        $filename = $_FILES["uploadfile"]["name"];
+        $tempname = $_FILES["uploadfile"]["tmp_name"];
+        $folder = './images/'.$filename;
+        
         //echo "Entered".$name.$class.$email.$marks;
-        $sqlup = "UPDATE crud SET name='$name', class='$class', email='$email', marks='$marks', yourself='$yourself', subject='$subject', gender='$gender'  WHERE id = '$idupdate'";
+        $sqlup = "UPDATE crud SET image='$filename', name='$name', class='$class', email='$email', marks='$marks', yourself='$yourself', subject='$subject', gender='$gender'  WHERE id = '$idupdate'";
         $resultup = mysqli_query($con,$sqlup);
         if($resultup){
             //echo "Updated Successfully !";
-            
+            move_uploaded_file($tempname, $folder);
            
             echo '<script>
               alert("Data Updated Successfully !!");
@@ -90,6 +104,17 @@
         }
         else{
             echo "Error: Could not able to Update".mysqli_error();
+        }
+    }
+    if(isset($_GET['deleteimgid'])){
+        $id = $_GET['deleteimgid'];
+        $sqlDel  = "UPDATE crud SET image=null WHERE id='$id'";
+        $resDel = mysqli_query($con, $sqlDel);
+        if($resDel){
+            header("Location: user.php");
+        }
+        else{
+            echo "ERROR: Could not able to Delete" . mysqli_error();
         }
     }
 
@@ -111,7 +136,7 @@
     <main class="container display=flex">
         <img src="./bird_colorful.jpg" alt="" style="width:100px; height:100px">
         <h2>CRUD Operations</h2>
-        <form method="post">
+        <form method="post" enctype="multipart/form-data">
             <div class="form-group">
                 <label for="InputEmail">Name</label>
                 <input type="text" class="form-control" name="name" placeholder="Your Name" value="<?php echo $name;?>" required >
@@ -147,8 +172,22 @@
                 </select>
             </div>
             <div class="form-group">
+                <label for="img">Choose Profile Image : </label>
+                <input type="file" class="form-control" name="uploadfile" value="" />
+            </div>
+            <?php 
+              if(!$showButton){
+                echo '<div class="form-group">
+                        <img src="./images/'.$image.'" width="150px" height="150px" alt="display-img" />
+                 </div>';
+                 echo '<button class="btn btn-success" name="preview">Preview</button>';
+                 echo '<a href="user.php?deleteimgid='.$idupdate.'" class="btn btn-danger">Delete</a>';
+              }
+            ?>
+            
+            <div class="form-group">
                 <label for="Gender">Gender</label><br>
-                <label for="male"><input type="radio" name="gender" value="Male" <?php if($gender=="Male") echo'checked="checked"'; ?>> Male</label><br>
+                <label for="male"><input type="radio"  name="gender" value="Male" <?php if($gender=="Male") echo'checked="checked"'; ?>> Male</label><br>
                 <label for="female"><input type="radio" name="gender" value="Female" <?php if($gender=="Female") echo'checked="checked"'; ?>> Female</label><br>
                 <label for="other"><input type="radio" name="gender" value="Other" <?php if($gender=="Other") echo'checked="checked"'; ?>> Other</label>
             </div>
@@ -171,6 +210,7 @@
             <thead>
                 <tr>
                     <th>ID</th>
+                    <th>Profile</th>
                     <th>Name</th>
                     <th>Class</th>
                     <th>Email</th>
@@ -196,8 +236,10 @@
                             $yourself = $row['yourself'];
                             $subject = $row['subject'];
                             $gender = $row['gender'];
+                            $showimage = $row['image'];
                             echo '<tr>
-                            <th scope="row">'.$j.'</th>
+                            <td scope="row">'.$j.'</td>
+                            <td><img src="./images/'.$showimage.'" alt="img" width="50px" height="50px"></td>
                             <td>'.$name.'</td>
                             <td>'.$class.'</td>
                             <td>'.$email.'</td>
