@@ -106,6 +106,7 @@
             echo "Error: Could not able to Update".mysqli_error();
         }
     }
+    //to delete uploaded image 
     if(isset($_GET['deleteimgid'])){
         $id = $_GET['deleteimgid'];
         $sqlDel  = "UPDATE crud SET image=null WHERE id='$id'";
@@ -202,6 +203,7 @@
                     echo '<button type="submit" class="btn btn-primary" name="update" >Update</button>';
                 }
             ?>
+            <a href="sendmail.php" class="btn btn-info">Contact Us</a>
             <!-- <button type="submit" class="btn btn-primary display=none"  name="submit" >Submit</button> -->
             <!-- <button type="submit" class="btn btn-primary" name="update" >Update</button> -->
         </form>
