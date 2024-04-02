@@ -23,7 +23,7 @@ if (isset($_POST["send"])) {
     $mail->Host       = 'sandbox.smtp.mailtrap.io';       //Set the SMTP server to send through
     $mail->SMTPAuth   = true;             //Enable SMTP authentication
     $mail->Username   = '4b0e184cc942ef';   //SMTP write your email
-    $mail->Password   = '25620586cc074e';      //SMTP password
+    $mail->Password   = 'your-pass';      //SMTP password
    // $mail->SMTPSecure = 'ssl';            //Enable implicit SSL encryption
     $mail->Port       = 2525;                                    
 
